@@ -403,6 +403,27 @@
   }
 
 
+  /* ---------- Launch notify ---------- */
+  .notify{max-width:430px;margin:30px auto 0;text-align:left}
+  .notify-label{display:block;font-size:14px;font-weight:700;color:var(--ink);margin-bottom:10px;text-align:center}
+  .notify-row{display:flex;gap:10px}
+  .notify input{
+    flex:1;min-width:0;background:var(--bg2);color:var(--ink);
+    border:1px solid var(--line);border-radius:10px;
+    padding:13px 14px;font-size:15px;font-family:inherit;
+  }
+  .notify input::placeholder{color:var(--muted)}
+  .notify input:focus{outline:2px solid var(--gold);outline-offset:1px;border-color:var(--gold)}
+  .notify button{flex:none;cursor:pointer;border:0;font-family:inherit;font-size:14px}
+  .notify-note{font-size:12.5px;line-height:1.55;color:var(--muted);margin-top:12px;text-align:center}
+  .notify-note a{color:var(--gold);text-decoration:underline}
+  .notify-alt{font-size:14px;color:var(--muted);margin-top:20px}
+  .notify-alt a{color:var(--gold);text-decoration:underline}
+  @media (max-width:420px){
+    .notify-row{flex-direction:column}
+    .notify button{width:100%}
+  }
+  
 </style>
 </head>
 <body>
@@ -923,7 +944,45 @@
       </span>
     </div>
     <p style="margin-top:22px;font-size:14px">Launching on iOS. Free for your first 3 reels.</p>
+
+    <!-- Launch notification signup.
+         ACTION MUST BE SET before this does anything: create a free form at
+         formspree.io (or getform.io / basin), then replace YOUR_URL_HERE below
+         with the URL it gives you. Until then the form is disabled so it can
+         never silently swallow someone's address. -->
+    <form class="notify" action="https://formspree.io/f/xppajgav" method="POST">
+      <label class="notify-label" for="notify-email">Get told when it launches</label>
+      <div class="notify-row">
+        <input id="notify-email" type="email" name="email" required
+               placeholder="you@email.com" autocomplete="email"
+               aria-describedby="notify-note">
+        <button type="submit" class="btn btn-gold">Notify me</button>
+      </div>
+      <p id="notify-note" class="notify-note">
+        One email when CAPPED goes live. Nothing else, and never passed on.
+        If you're under 18, check with a parent or guardian first.
+        <a href="privacy.html">Privacy</a>
+      </p>
+    </form>
+
+    <p class="notify-alt">Or follow <a href="https://instagram.com/cappedhq" rel="noopener noreferrer">@cappedhq</a> for launch.</p>
   </div>
+
+<script>
+// Until YOUR_URL_HERE is replaced with a real form URL, the form would POST to
+// a relative path that 404s — silently losing whoever typed their address in.
+// Disable it instead and say so, rather than pretending it worked.
+(function () {
+  var f = document.querySelector('.notify');
+  if (!f || /^https?:\/\//.test(f.getAttribute('action') || '')) return;
+  f.querySelector('input').disabled = true;
+  var b = f.querySelector('button');
+  b.disabled = true;
+  b.textContent = 'Not set up yet';
+  b.style.opacity = '.55';
+  f.addEventListener('submit', function (e) { e.preventDefault(); });
+})();
+</script>
 </section>
 
 </main>
@@ -941,7 +1000,7 @@
       <a href="index.html">Home</a>
       <a href="privacy.html">Privacy Policy</a>
       <a href="terms.html">Terms of Use</a>
-      <a href="mailto:adamshakerwork@gmail.com">adamshakerwork@gmail.com</a>
+      <a href="mailto:cappedhq@gmail.com">cappedhq@gmail.com</a>
     </nav>
   </div>
 </footer>

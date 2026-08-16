@@ -58,7 +58,7 @@ cd ~/Desktop/CAPPED/site
 
 git init -b main
 git config user.name "Adam Shaker"
-git config user.email "adamshakerwork@gmail.com"
+git config user.email "cappedhq@gmail.com"
 
 git add .
 git commit -m "CAPPED public site: landing page, privacy policy, terms"

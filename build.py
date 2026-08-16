@@ -31,7 +31,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_SRC = os.path.abspath(os.path.join(HERE, "..", "marketing"))
 
-EMAIL = "adamshakerwork@gmail.com"
+EMAIL = "cappedhq@gmail.com"
 YEAR = "2026"
 
 # --------------------------------------------------------------------------
@@ -702,7 +702,7 @@ def build_index(src_path, out_path, css, favicon):
     # The screenshot carousel keeps its markup, its inline script and its CSS in
     # the source page. The first two ride along inside body_mid; the CSS has to
     # be lifted out of the source <style> explicitly.
-    css_all = css + CSS_LANDING + lift_css(src, "shots")
+    css_all = css + CSS_LANDING + lift_css(src, "shots") + lift_css(src, "notify")
     doc = f"""{head(
         "CAPPED — Get seen. Get signed.",
         "CAPPED turns your match footage into a professional football highlight reel coaches actually want to watch. Built for Australian players.",
