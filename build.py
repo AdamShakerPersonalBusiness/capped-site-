@@ -114,14 +114,19 @@ CSS_CORE = """
   .nav-links a[aria-current="page"]{color:var(--gold)}
 
   .btn{
-    display:inline-block;border-radius:10px;font-weight:800;
-    padding:11px 20px;font-size:14px;letter-spacing:.2px;
+    /* inline-flex + line-height:1 so the label sits on the true vertical centre.
+       With the inherited 1.6 line-height the text rendered ~3.6px high in the
+       larger button, because Latin ascent exceeds descent. */
+    display:inline-flex;align-items:center;justify-content:center;
+    line-height:1;text-align:center;
+    border-radius:10px;font-weight:800;
+    padding:15px 20px;font-size:14px;letter-spacing:.2px;
     transition:transform .15s ease,opacity .15s ease;
   }
   .btn:active{transform:scale(.97)}
   .btn-gold{background:var(--gold);color:#161206}
   .btn-ghost{border:1px solid var(--line);color:var(--ink)}
-  .btn-lg{padding:15px 30px;font-size:16px;border-radius:12px}
+  .btn-lg{padding:20px 30px;font-size:16px;border-radius:12px}
 
   .eyebrow{
     display:inline-flex;align-items:center;gap:8px;
