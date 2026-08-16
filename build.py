@@ -507,7 +507,7 @@ def nav(current):
       <ul class="nav-links">
 {links}
       </ul>
-      <a class="btn btn-gold nav-cta" href="{cta_href}">Get the App</a>
+      <a class="btn btn-gold nav-cta" href="{cta_href}">Coming soon</a>
     </div>
   </div>
 </nav>"""
