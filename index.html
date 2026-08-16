@@ -258,6 +258,151 @@
     .cta-row .btn{flex:1;text-align:center}
   }
 
+
+  .shots{position:relative;overflow:hidden}
+  .shots::before{
+    content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(78% 46% at 50% -6%, var(--pitch) 0%, transparent 62%),
+      radial-gradient(54% 40% at 50% 106%, rgba(200,168,106,0.10) 0%, transparent 64%);
+  }
+  .shots > .wrap{position:relative;z-index:1}
+
+  .shots-carousel{position:relative;--shot-w:258px}
+
+  /* Before the script runs the viewport is a plain horizontal scroller, so the
+     screens are still reachable with JavaScript off. .is-ready hands control to
+     the transform-driven track. */
+  .shots-viewport{
+    max-width:600px;margin:0 auto;
+    overflow-x:auto;
+    padding:6px 0 32px;
+    touch-action:pan-y;
+  }
+  .shots-carousel.is-ready .shots-viewport{overflow:hidden}
+
+  .shots-track{
+    position:relative;          /* offsetParent for the slide measurements */
+    display:flex;align-items:flex-start;gap:22px;
+    transition:transform .55s cubic-bezier(.22,.75,.25,1);
+  }
+  .shots-carousel.is-ready .shots-track{will-change:transform}
+
+  .shot{flex:0 0 var(--shot-w);width:var(--shot-w);text-align:center}
+  .shots-carousel.is-ready .shot{
+    opacity:.3;transform:scale(.86);
+    transition:opacity .45s ease,transform .45s ease;
+  }
+  .shots-carousel.is-ready .shot.is-active{opacity:1;transform:scale(1)}
+
+  /* ---------- CSS phone frame ---------- */
+  .phone{
+    position:relative;padding:7px;border-radius:34px;
+    background:linear-gradient(158deg,rgba(242,237,226,0.20),rgba(242,237,226,0.04) 42%,rgba(0,0,0,0.55));
+    box-shadow:0 26px 54px -22px rgba(0,0,0,0.9);
+    transition:box-shadow .45s ease;
+  }
+  .phone::before,.phone::after{content:"";position:absolute;border-radius:3px;pointer-events:none}
+  .phone::before{  /* power button */
+    right:-2px;top:26%;width:2px;height:13%;
+    background:linear-gradient(180deg,rgba(242,237,226,0.30),rgba(242,237,226,0.08));
+  }
+  .phone::after{   /* volume rocker */
+    left:-2px;top:20%;width:2px;height:16%;
+    background:linear-gradient(180deg,
+      rgba(242,237,226,0.26) 0 42%,
+      transparent 42% 56%,
+      rgba(242,237,226,0.26) 56% 100%);
+  }
+  .shot.is-active .phone{
+    box-shadow:0 32px 64px -20px rgba(0,0,0,0.95),0 0 0 1px rgba(200,168,106,0.18);
+  }
+  .phone-screen{
+    position:relative;overflow:hidden;border-radius:28px;
+    background:var(--bg);box-shadow:0 0 0 1px rgba(0,0,0,0.7);
+  }
+  /* the width and height attributes on each image reserve the box before it
+     loads, so lazy-loading these costs no layout shift */
+  .phone-screen img{display:block;width:100%;height:auto;border-radius:inherit}
+
+  /* ---------- slide caption ---------- */
+  .shot-cap{margin-top:20px}
+  .shot-n{display:block;font-size:11px;letter-spacing:2.4px;font-weight:800;color:var(--gold)}
+  .shot-cap h3{font-size:17px;font-weight:700;letter-spacing:-.3px;line-height:1.3;margin-top:8px}
+  .shot-cap p{color:var(--muted);font-size:14px;line-height:1.5;margin-top:7px}
+
+  /* ---------- controls ---------- */
+  .shots-ui{display:none}
+  .shots-carousel.is-ready .shots-ui{display:block}
+  .shots-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px}
+  .shots-arrow{
+    width:44px;height:44px;flex:none;
+    display:inline-flex;align-items:center;justify-content:center;
+    background:var(--card);color:var(--ink);
+    border:1px solid var(--line);border-radius:50%;cursor:pointer;
+    transition:color .15s ease,border-color .15s ease,transform .15s ease;
+  }
+  .shots-arrow:hover{color:var(--gold);border-color:rgba(200,168,106,0.45)}
+  .shots-arrow:active{transform:scale(.94)}
+  .shots-arrow svg{display:block;width:20px;height:20px}
+
+  .shots-dots{display:flex;align-items:center;gap:2px}
+  .shots-dot{               /* 28px box keeps the WCAG 2.2 24x24 target size */
+    width:28px;height:28px;flex:none;
+    display:inline-flex;align-items:center;justify-content:center;
+    background:none;border:0;border-radius:50%;cursor:pointer;
+  }
+  .shots-dot i{
+    display:block;width:8px;height:8px;border-radius:50%;
+    background:rgba(242,237,226,0.28);
+    transition:background .2s ease,transform .2s ease;
+  }
+  .shots-dot:hover i{background:rgba(242,237,226,0.55)}
+  .shots-dot[aria-current="true"] i{background:var(--gold);transform:scale(1.45)}
+
+  .shots-toggle-row{display:flex;justify-content:center;margin-top:16px}
+  .shots-toggle{
+    display:inline-flex;align-items:center;gap:8px;
+    min-height:32px;padding:6px 15px;
+    background:none;border:1px solid var(--line);border-radius:999px;
+    color:var(--muted);cursor:pointer;
+    font-family:inherit;font-size:12.5px;font-weight:600;letter-spacing:.2px;
+    transition:color .15s ease,border-color .15s ease;
+  }
+  .shots-toggle:hover{color:var(--ink);border-color:rgba(200,168,106,0.45)}
+  .shots-toggle svg{display:block;width:12px;height:12px;flex:none}
+  .shots-toggle .i-play{display:none}
+  .shots-toggle.is-paused .i-play{display:block}
+  .shots-toggle.is-paused .i-pause{display:none}
+
+  .shots-live{
+    position:absolute;width:1px;height:1px;overflow:hidden;
+    margin:-1px;padding:0;border:0;
+    clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;
+  }
+
+  @media (min-width:720px){
+    /* fade the peeking neighbours out rather than hard-clipping them */
+    .shots-carousel.is-ready .shots-viewport{
+      -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 12%,#000 88%,transparent 100%);
+      mask-image:linear-gradient(90deg,transparent 0,#000 12%,#000 88%,transparent 100%);
+    }
+  }
+  @media (min-width:900px){
+    .shots-carousel{--shot-w:276px}
+    .shots-viewport{max-width:640px}
+  }
+  @media (max-width:520px){
+    .shots-carousel{--shot-w:min(258px,76vw)}
+    .shots-track{gap:18px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    /* no auto-advance and no slide animation - the script checks this too */
+    .shots-track,.shots-carousel.is-ready .shot,.phone{transition:none}
+    .shots-toggle-row{display:none}
+  }
+
+
 </style>
 </head>
 <body>
@@ -337,6 +482,364 @@
     </div>
   </div>
 </section>
+
+<!-- ============================================================
+     App screenshot carousel.
+     site/build.py copies the whole run of body markup from the proof bar down
+     to the footer element into site/index.html verbatim, so this markup and
+     the script below survive a rebuild as-is. The styling lives in the
+     shots:start / shots:end block in the head stylesheet above, which build.py
+     lifts separately.
+
+     NB: do not write the literal footer or proof-bar start tags anywhere in
+     this region - build.py locates those boundaries by plain string search,
+     and an earlier match here silently truncates the built page.
+
+     Screens are real captures from appstore/raw/, resized to 560px wide;
+     the captions are HTML rather than burnt into the images.
+     ============================================================ -->
+<section id="screens" class="shots">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker">Inside the app</div>
+      <h2>See it before you download it</h2>
+      <p>Six screens, from the match link you paste to the reel a scout opens.</p>
+    </div>
+
+    <div class="shots-carousel" data-shots role="group"
+         aria-roledescription="carousel" aria-label="CAPPED app screenshots">
+
+      <div class="shots-viewport" data-shots-viewport>
+        <div class="shots-track" id="shots-track" data-shots-track>
+
+          <div class="shot" data-shot data-shot-title="Earn your cap. Get noticed."
+               role="group" aria-roledescription="slide" aria-label="Screen 1 of 6">
+            <div class="phone">
+              <div class="phone-screen">
+                <img src="assets/shots/01-home.jpg" width="560" height="1212"
+                     loading="lazy" decoding="async"
+                     alt="The CAPPED home screen: a Turn a match into a reel card with a New reel button, shortcuts to training sessions, gym and nutrition plans, and the player's own list of reels below.">
+              </div>
+            </div>
+            <div class="shot-cap">
+              <span class="shot-n" aria-hidden="true">01 / 06</span>
+              <h3>Earn your cap. Get noticed.</h3>
+              <p>Your reels, your drills and your next session, all on one screen.</p>
+            </div>
+          </div>
+
+          <div class="shot" data-shot data-shot-title="Drop your Veo or Hudl match link"
+               role="group" aria-roledescription="slide" aria-label="Screen 2 of 6">
+            <div class="phone">
+              <div class="phone-screen">
+                <img src="assets/shots/02-upload-footage.jpg" width="560" height="1212"
+                     loading="lazy" decoding="async"
+                     alt="The New reel form, with fields for the reel title, a Veo or Hudl footage link, the player to feature, shirt number and position, above a Submit reel button.">
+              </div>
+            </div>
+            <div class="shot-cap">
+              <span class="shot-n" aria-hidden="true">02 / 06</span>
+              <h3>Drop your Veo or Hudl match link</h3>
+              <p>Paste the URL, name the player, pick a number. That is the whole setup.</p>
+            </div>
+          </div>
+
+          <div class="shot" data-shot data-shot-title="AI finds your best on-ball moments"
+               role="group" aria-roledescription="slide" aria-label="Screen 3 of 6">
+            <div class="phone">
+              <div class="phone-screen">
+                <img src="assets/shots/03-ai-highlights.jpg" width="560" height="1212"
+                     loading="lazy" decoding="async"
+                     alt="The Find the moments screen, offering a choice between tracking one player through the match or jumping to the loudest passages, with jersey colour, shirt number and scan length fields.">
+              </div>
+            </div>
+            <div class="shot-cap">
+              <span class="shot-n" aria-hidden="true">03 / 06</span>
+              <h3>AI finds your best on-ball moments</h3>
+              <p>Track one player through the match, or jump straight to the loud passages.</p>
+            </div>
+          </div>
+
+          <div class="shot" data-shot data-shot-title="A scout-ready reel in minutes"
+               role="group" aria-roledescription="slide" aria-label="Screen 4 of 6">
+            <div class="phone">
+              <div class="phone-screen">
+                <img src="assets/shots/04-reel-ready.jpg" width="560" height="1212"
+                     loading="lazy" decoding="async"
+                     alt="A finished reel called Season highlights 2026, showing a landscape cut for the club email with Send to a scout and Save to Photos buttons, and a portrait cut for Instagram and TikTok below it.">
+              </div>
+            </div>
+            <div class="shot-cap">
+              <span class="shot-n" aria-hidden="true">04 / 06</span>
+              <h3>A scout-ready reel in minutes</h3>
+              <p>Landscape for the club email, portrait for Instagram and TikTok.</p>
+            </div>
+          </div>
+
+          <div class="shot" data-shot data-shot-title="Coaches browse you and message you"
+               role="group" aria-roledescription="slide" aria-label="Screen 5 of 6">
+            <div class="phone">
+              <div class="phone-screen">
+                <img src="assets/shots/05-coaches.jpg" width="560" height="1212"
+                     loading="lazy" decoding="async"
+                     alt="The Discover feed listing reels from players nearby, each card showing the player's name, position, age group and city above a playable highlight video.">
+              </div>
+            </div>
+            <div class="shot-cap">
+              <span class="shot-n" aria-hidden="true">05 / 06</span>
+              <h3>Coaches browse you and message you</h3>
+              <p>Your reel lands in Discover, filtered by position, age group and area.</p>
+            </div>
+          </div>
+
+          <div class="shot" data-shot data-shot-title="Pro drills, Elite nutrition and gym"
+               role="group" aria-roledescription="slide" aria-label="Screen 6 of 6">
+            <div class="phone">
+              <div class="phone-screen">
+                <img src="assets/shots/06-training-plans.jpg" width="560" height="1212"
+                     loading="lazy" decoding="async"
+                     alt="The Drills tab, with position and level selectors above this week's plan, showing Monday's technical session broken into timed warm-up and main-session drills.">
+              </div>
+            </div>
+            <div class="shot-cap">
+              <span class="shot-n" aria-hidden="true">06 / 06</span>
+              <h3>Pro drills, Elite nutrition and gym</h3>
+              <p>A full session for every day, built for your position and your level.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="shots-ui" data-shots-ui>
+        <div class="shots-row">
+          <button class="shots-arrow" type="button" data-shots-prev
+                  aria-controls="shots-track" aria-label="Previous screen">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+
+          <div class="shots-dots" data-shots-dots>
+            <button class="shots-dot" type="button" data-shots-dot aria-controls="shots-track"
+                    aria-current="true" aria-label="Show screen 1: Earn your cap. Get noticed."><i aria-hidden="true"></i></button>
+            <button class="shots-dot" type="button" data-shots-dot aria-controls="shots-track"
+                    aria-label="Show screen 2: Drop your Veo or Hudl match link"><i aria-hidden="true"></i></button>
+            <button class="shots-dot" type="button" data-shots-dot aria-controls="shots-track"
+                    aria-label="Show screen 3: AI finds your best on-ball moments"><i aria-hidden="true"></i></button>
+            <button class="shots-dot" type="button" data-shots-dot aria-controls="shots-track"
+                    aria-label="Show screen 4: A scout-ready reel in minutes"><i aria-hidden="true"></i></button>
+            <button class="shots-dot" type="button" data-shots-dot aria-controls="shots-track"
+                    aria-label="Show screen 5: Coaches browse you and message you"><i aria-hidden="true"></i></button>
+            <button class="shots-dot" type="button" data-shots-dot aria-controls="shots-track"
+                    aria-label="Show screen 6: Pro drills, Elite nutrition and gym"><i aria-hidden="true"></i></button>
+          </div>
+
+          <button class="shots-arrow" type="button" data-shots-next
+                  aria-controls="shots-track" aria-label="Next screen">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- WCAG 2.2.2 Pause, Stop, Hide - hover/focus pausing alone is not a
+             mechanism a keyboard or screen reader user can rely on. -->
+        <div class="shots-toggle-row">
+          <button class="shots-toggle" type="button" data-shots-toggle aria-controls="shots-track">
+            <svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+              <path d="M6 4h4v16H6zM14 4h4v16h-4z"/>
+            </svg>
+            <svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+              <path d="M7 4l13 8-13 8z"/>
+            </svg>
+            <span data-shots-toggle-text>Pause slideshow</span>
+          </button>
+        </div>
+      </div>
+
+      <p class="shots-live" data-shots-live aria-live="off" aria-atomic="true"></p>
+    </div>
+  </div>
+</section>
+
+<script>
+/* App screenshot carousel — vanilla, no dependencies.
+   Auto-advances every 5s and pauses on hover, on focus, when the tab is hidden,
+   when the visitor presses Pause, and whenever prefers-reduced-motion is set. */
+(function () {
+  "use strict";
+
+  var root = document.querySelector("[data-shots]");
+  if (!root) return;
+
+  var viewport = root.querySelector("[data-shots-viewport]");
+  var track    = root.querySelector("[data-shots-track]");
+  var slides   = [].slice.call(root.querySelectorAll("[data-shot]"));
+  var dots     = [].slice.call(root.querySelectorAll("[data-shots-dot]"));
+  var live     = root.querySelector("[data-shots-live]");
+  var toggle   = root.querySelector("[data-shots-toggle]");
+  var toggleTx = root.querySelector("[data-shots-toggle-text]");
+  var prev     = root.querySelector("[data-shots-prev]");
+  var next     = root.querySelector("[data-shots-next]");
+
+  if (!viewport || !track || slides.length < 2) return;
+
+  var DELAY = 5000;
+  var index = 0;
+  var timer = null;
+  var wantsPlay = true;   // the visitor's own intent, via the Pause button
+  var hovering  = false;
+  var focused   = false;
+
+  var mq = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
+  function reduced() { return !!(mq && mq.matches); }
+
+  // Hands the viewport over from "plain scroller" to the transform-driven track.
+  root.classList.add("is-ready");
+
+  function place(animate) {
+    var slide = slides[index];
+    var offset = Math.round((viewport.clientWidth - slide.offsetWidth) / 2 - slide.offsetLeft);
+    var instant = !animate || reduced();
+    if (instant) track.style.transition = "none";
+    track.style.transform = "translate3d(" + offset + "px,0,0)";
+    if (instant) {
+      void track.offsetHeight;          // flush, so the next move still animates
+      track.style.transition = "";
+    }
+  }
+
+  function render(animate, announce) {
+    for (var i = 0; i < slides.length; i++) {
+      slides[i].classList.toggle("is-active", i === index);
+    }
+    for (var j = 0; j < dots.length; j++) {
+      if (j === index) dots[j].setAttribute("aria-current", "true");
+      else dots[j].removeAttribute("aria-current");
+    }
+    place(animate);
+    if (announce && live) {
+      live.textContent = "Screen " + (index + 1) + " of " + slides.length + ": " +
+                         (slides[index].getAttribute("data-shot-title") || "");
+    }
+  }
+
+  function go(to, announce) {
+    var n = slides.length;
+    index = ((to % n) + n) % n;
+    render(true, announce);
+  }
+
+  function rotating() {
+    return wantsPlay && !hovering && !focused && !document.hidden && !reduced();
+  }
+
+  // Single place that starts/stops the timer. Called after anything that could
+  // change the answer, so a resumed slideshow always gets a fresh full interval.
+  function sync() {
+    if (timer) { clearInterval(timer); timer = null; }
+    var on = rotating();
+    if (on) timer = setInterval(function () { go(index + 1, false); }, DELAY);
+    // Announcing every automatic advance would be noise; only announce while
+    // the slideshow is stopped, i.e. for visitor-driven changes. (APG.)
+    if (live) live.setAttribute("aria-live", on ? "off" : "polite");
+  }
+
+  function paint() {
+    if (!toggle) return;
+    toggle.classList.toggle("is-paused", !wantsPlay);
+    if (toggleTx) toggleTx.textContent = wantsPlay ? "Pause slideshow" : "Play slideshow";
+  }
+
+  // ---- controls ----
+  if (prev) prev.addEventListener("click", function () { go(index - 1, true); sync(); });
+  if (next) next.addEventListener("click", function () { go(index + 1, true); sync(); });
+
+  dots.forEach(function (dot, i) {
+    dot.addEventListener("click", function () { go(i, true); sync(); });
+  });
+
+  if (toggle) toggle.addEventListener("click", function () {
+    wantsPlay = !wantsPlay;
+    paint();
+    sync();
+    if (live && !wantsPlay) live.textContent = "Slideshow paused.";
+  });
+
+  // ---- keyboard: arrows move between slides while focus is in the carousel ----
+  root.addEventListener("keydown", function (e) {
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    var k = e.key;
+    if (k === "ArrowLeft")       go(index - 1, true);
+    else if (k === "ArrowRight") go(index + 1, true);
+    else if (k === "Home")       go(0, true);
+    else if (k === "End")        go(slides.length - 1, true);
+    else return;
+    e.preventDefault();
+    sync();
+  });
+
+  // ---- pause on hover (pointer devices only, so a tap cannot wedge it) ----
+  if (!window.matchMedia || window.matchMedia("(hover: hover)").matches) {
+    root.addEventListener("mouseenter", function () { hovering = true;  sync(); });
+    root.addEventListener("mouseleave", function () { hovering = false; sync(); });
+  }
+
+  // ---- pause on focus ----
+  root.addEventListener("focusin", function () { focused = true; sync(); });
+  root.addEventListener("focusout", function (e) {
+    if (!root.contains(e.relatedTarget)) { focused = false; sync(); }
+  });
+
+  // ---- pause when the tab is hidden ----
+  document.addEventListener("visibilitychange", sync);
+
+  // ---- touch swipe: passive listeners only, so vertical scrolling is never blocked ----
+  var x0 = null, y0 = null, axis = null;
+  viewport.addEventListener("touchstart", function (e) {
+    var t = e.changedTouches[0];
+    x0 = t.clientX; y0 = t.clientY; axis = null;
+  }, { passive: true });
+
+  viewport.addEventListener("touchmove", function (e) {
+    if (x0 === null || axis) return;
+    var t = e.changedTouches[0];
+    var dx = Math.abs(t.clientX - x0), dy = Math.abs(t.clientY - y0);
+    if (dx > 8 || dy > 8) axis = dx > dy ? "x" : "y";
+  }, { passive: true });
+
+  viewport.addEventListener("touchend", function (e) {
+    if (x0 === null) return;
+    var dx = e.changedTouches[0].clientX - x0;
+    x0 = null;
+    if (axis === "x" && Math.abs(dx) > 40) { go(index + (dx < 0 ? 1 : -1), true); sync(); }
+  }, { passive: true });
+
+  // ---- keep the active slide centred through resizes and font swaps ----
+  var frame = 0;
+  function remeasure() {
+    if (frame) cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(function () { frame = 0; render(false, false); });
+  }
+  window.addEventListener("resize", remeasure);
+  window.addEventListener("load", remeasure);
+  if (window.ResizeObserver) new ResizeObserver(remeasure).observe(viewport);
+
+  // ---- react to the motion preference changing mid-session ----
+  if (mq) {
+    var onMotion = function () { render(false, false); sync(); };
+    if (mq.addEventListener) mq.addEventListener("change", onMotion);
+    else if (mq.addListener) mq.addListener(onMotion);
+  }
+
+  paint();
+  render(false, false);
+  sync();
+})();
+</script>
 
 <section class="band">
   <div class="wrap">

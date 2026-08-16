@@ -539,6 +539,39 @@ def add_rel_noopener(html):
 
 
 # --------------------------------------------------------------------------
+# component css lifted from the source page
+# --------------------------------------------------------------------------
+
+MARKED_CSS = r"/\*\s*==\s*{0}:start\s*==.*?\*/(.*?)/\*\s*==\s*{0}:end\s*==\s*\*/"
+
+
+def lift_css(src_html, marker):
+    """Pull a fenced CSS block out of a source page's <style> so components
+    that live in the source (markup + styles together) survive a rebuild
+    without their CSS having to be duplicated into this script."""
+    m = re.search(MARKED_CSS.format(marker), src_html, re.S)
+    if not m:
+        raise SystemExit(
+            f"could not find the '/* == {marker}:start == */ ... /* == {marker}:end == */' "
+            f"CSS block in the source page - it is required, and dropping it would ship "
+            f"the {marker} markup unstyled"
+        )
+    return m.group(1)
+
+
+def check_local_assets(html, out, label):
+    """Warn loudly if the page points at a same-repo file that isn't there.
+    Cheap guard against shipping a page full of broken images."""
+    missing = []
+    for ref in re.findall(r'(?:src|href)="((?!https?:|data:|mailto:|#)[^"]+\.(?:png|jpe?g|svg|webp|gif|css|js))"', html):
+        if not os.path.exists(os.path.join(out, ref)):
+            missing.append(ref)
+    for ref in sorted(set(missing)):
+        print(f"  WARNING {label}: missing asset {ref}")
+    return missing
+
+
+# --------------------------------------------------------------------------
 # legal pages
 # --------------------------------------------------------------------------
 
@@ -634,7 +667,25 @@ def build_index(src_path, out_path, css, favicon):
         raise SystemExit("could not parse landing hero - structure changed")
     hero_inner = hero.group(1).strip()
 
-    body_mid = src[src.index('<div class="proof">'): src.index("<footer>")].strip()
+    # Body copy is lifted as one run, from the proof bar down to the footer.
+    # Both boundaries are matched at the start of a line so that a stray mention
+    # of either tag inside the page - in an HTML comment, or in the inline
+    # carousel script - cannot move the cut and silently drop everything after
+    # it. (That failure mode is quiet: the build still succeeds, it just ships a
+    # page missing its pricing and download sections.)
+    start = re.search(r'^<div class="proof">', src, re.M)
+    end = re.search(r"^<footer>", src, re.M)
+    if not (start and end and start.start() < end.start()):
+        raise SystemExit("could not locate the landing body between the proof bar and the footer")
+    body_mid = src[start.start(): end.start()].strip()
+
+    # Structural sanity check on the lifted run. Anything that truncates it
+    # should fail the build loudly rather than quietly shorten the page.
+    for required in ('id="how"', 'id="screens"', 'id="pricing"', 'id="download"'):
+        if required not in body_mid:
+            raise SystemExit(f"landing body is missing {required} - the lift was truncated")
+    if not body_mid.endswith("</section>"):
+        raise SystemExit("landing body does not end on a closing section - the lift was truncated")
 
     # markup fixes only, no copy changes
     body_mid = body_mid.replace(
@@ -648,7 +699,10 @@ def build_index(src_path, out_path, css, favicon):
     )
     body_mid = add_rel_noopener(body_mid)
 
-    css_all = css + CSS_LANDING
+    # The screenshot carousel keeps its markup, its inline script and its CSS in
+    # the source page. The first two ride along inside body_mid; the CSS has to
+    # be lifted out of the source <style> explicitly.
+    css_all = css + CSS_LANDING + lift_css(src, "shots")
     doc = f"""{head(
         "CAPPED — Get seen. Get signed.",
         "CAPPED turns your match footage into a professional football highlight reel coaches actually want to watch. Built for Australian players.",
@@ -783,7 +837,9 @@ def main():
     favicon = data_uri(os.path.join(out, "assets", "favicon-64.png"))
     css = CSS_CORE.replace("__LOGO__", logo)
 
-    build_index(os.path.join(src, "landing-page.html"), os.path.join(out, "index.html"), css, favicon)
+    index_doc = build_index(
+        os.path.join(src, "landing-page.html"), os.path.join(out, "index.html"), css, favicon
+    )
     build_legal(
         os.path.join(src, "privacy-policy.html"), os.path.join(out, "privacy.html"),
         "Privacy Policy — CAPPED", "Privacy Policy",
@@ -804,6 +860,15 @@ def main():
     for name in ("index.html", "privacy.html", "terms.html", "404.html", "privacy-policy.html"):
         p = os.path.join(out, name)
         print(f"  built {name:22s} {os.path.getsize(p) / 1024:6.1f} KB")
+
+    check_local_assets(index_doc, out, "index.html")
+
+    # CNAME binds the custom domain; losing it takes cappedhq.com down.
+    cname = os.path.join(out, "CNAME")
+    if not os.path.exists(cname):
+        print("  WARNING CNAME is missing - cappedhq.com will stop resolving")
+    else:
+        print(f"  CNAME  {open(cname).read().strip()}")
 
 
 if __name__ == "__main__":
