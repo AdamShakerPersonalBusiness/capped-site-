@@ -272,7 +272,7 @@ CSS_LANDING = """
   .dl h2{margin:0 auto}
   .dl p{color:var(--muted);margin:16px auto 32px;max-width:460px;font-size:17px}
   .store{
-    display:inline-flex;align-items:center;gap:12px;
+    display:inline-flex;align-items:center;justify-content:center;text-align:center;gap:12px;
     background:var(--ink);color:#0B0E0C;
     border-radius:12px;padding:13px 26px;font-weight:700;
     transition:transform .15s ease;
