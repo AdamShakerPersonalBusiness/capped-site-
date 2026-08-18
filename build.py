@@ -231,6 +231,7 @@ CSS_LANDING = """
   .g4{grid-template-columns:repeat(4,1fr)}
 
   .card{
+    --mx:50%;--my:50%;
     background:var(--card);border:1px solid var(--line);
     border-radius:16px;padding:28px;
     /* Hover treatment. Deliberately restrained — a big bounce reads as cheap.
@@ -271,6 +272,65 @@ CSS_LANDING = """
     .card:hover::after{width:0}
     .card:hover .ic{transform:none}
   }
+  /* Pointer-tracked glow. ::after is already the top accent, so this uses
+     ::before, and card children are lifted above it — a positioned pseudo
+     element would otherwise paint over the text. */
+  .card::before{
+    content:"";position:absolute;inset:0;border-radius:inherit;
+    background:radial-gradient(320px circle at var(--mx) var(--my),
+               rgba(200,168,106,.11), transparent 62%);
+    opacity:0;transition:opacity .4s ease;pointer-events:none;z-index:0;
+  }
+  .card > *{position:relative;z-index:1}
+  @media (hover:hover){ .card:hover::before{opacity:1} }
+
+  /* ---------- scroll reveal (applied by JS, so no-JS shows everything) */
+  [data-reveal]{
+    opacity:0;transform:translateY(14px);
+    transition:opacity .68s cubic-bezier(.22,.7,.28,1),
+               transform .68s cubic-bezier(.22,.7,.28,1);
+  }
+  [data-reveal].is-in{opacity:1;transform:none}
+
+  /* ---------- nav condenses on scroll */
+  .site-nav.is-scrolled{
+    background:rgba(11,14,12,0.94);
+    backdrop-filter:saturate(180%) blur(20px);
+    -webkit-backdrop-filter:saturate(180%) blur(20px);
+    border-bottom-color:rgba(200,168,106,.16);
+    box-shadow:0 10px 30px -20px rgba(0,0,0,.9);
+  }
+  .site-nav .nav-in{transition:height .32s cubic-bezier(.22,.7,.28,1)}
+  .site-nav.is-scrolled .nav-in{height:56px}
+
+  /* ---------- hero ambient drift: 26s, barely perceptible */
+  @keyframes capped-drift{
+    from{transform:translate3d(0,0,0) scale(1)}
+    to{transform:translate3d(0,-2.2%,0) scale(1.06)}
+  }
+  @media (prefers-reduced-motion:no-preference){
+    header::before{animation:capped-drift 26s ease-in-out infinite alternate}
+  }
+
+  /* ---------- pricing: make the tier you want people on feel like the default */
+  .price-card{transition:transform .38s cubic-bezier(.22,.7,.28,1),
+                         border-color .38s ease, box-shadow .38s ease}
+  .price-card.pop{
+    box-shadow:0 0 0 1px rgba(200,168,106,.16),
+               0 30px 70px -40px rgba(200,168,106,.34);
+  }
+  @media (hover:hover){
+    .price-card:hover{transform:translateY(-5px);border-color:rgba(200,168,106,.42)}
+    .price-card.pop:hover{box-shadow:0 0 0 1px rgba(200,168,106,.3),
+                                    0 34px 80px -38px rgba(200,168,106,.44)}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    [data-reveal]{opacity:1;transform:none;transition:none}
+    .price-card,.site-nav .nav-in{transition:none}
+    .price-card:hover{transform:none}
+  }
+
   .step-n{
     width:38px;height:38px;border-radius:10px;
     background:var(--gold-dim);border:1px solid rgba(200,168,106,0.35);
