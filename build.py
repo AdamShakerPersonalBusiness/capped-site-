@@ -233,6 +233,43 @@ CSS_LANDING = """
   .card{
     background:var(--card);border:1px solid var(--line);
     border-radius:16px;padding:28px;
+    /* Hover treatment. Deliberately restrained — a big bounce reads as cheap.
+       transform + opacity only, so it stays on the compositor and never
+       triggers layout. */
+    position:relative;
+    transition:transform .38s cubic-bezier(.22,.7,.28,1),
+               border-color .38s ease,
+               background-color .38s ease,
+               box-shadow .38s ease;
+  }
+  /* A hairline of gold that grows out from the centre of the top edge —
+     like light catching a machined surface. */
+  .card::after{
+    content:"";position:absolute;top:-1px;left:50%;
+    width:0;height:1px;
+    background:linear-gradient(90deg,transparent,var(--gold),transparent);
+    transform:translateX(-50%);
+    transition:width .45s cubic-bezier(.22,.7,.28,1);
+    pointer-events:none;
+  }
+  @media (hover:hover){
+    .card:hover{
+      transform:translateY(-6px);
+      border-color:rgba(200,168,106,.42);
+      background-color:#161915;
+      box-shadow:0 22px 44px -22px rgba(0,0,0,.85);
+    }
+    .card:hover::after{width:72%}
+    .card:hover .ic{transform:translateY(-2px) scale(1.07)}
+  }
+  .card .ic{transition:transform .38s cubic-bezier(.22,.7,.28,1)}
+  /* Touch devices get the same feedback on press, minus the hover-only lift. */
+  .card:active{transform:translateY(-2px);border-color:rgba(200,168,106,.42)}
+  @media (prefers-reduced-motion:reduce){
+    .card,.card::after,.card .ic{transition:none}
+    .card:hover{transform:none}
+    .card:hover::after{width:0}
+    .card:hover .ic{transform:none}
   }
   .step-n{
     width:38px;height:38px;border-radius:10px;
