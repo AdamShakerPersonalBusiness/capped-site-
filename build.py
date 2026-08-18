@@ -179,17 +179,24 @@ CSS_LANDING = """
   .hero-band::before{
     content:"";position:absolute;inset:0;z-index:0;
     background:
-      radial-gradient(90% 60% at 18% 8%, var(--pitch) 0%, transparent 62%),
-      radial-gradient(70% 55% at 92% 95%, rgba(200,168,106,0.13) 0%, transparent 60%);
+      /* one warm bloom sitting behind the headline, not in a corner */
+      radial-gradient(74% 60% at 26% 58%, rgba(46,92,58,0.30) 0%, transparent 62%),
+      /* a smaller gold catch opposite, for depth rather than decoration */
+      radial-gradient(54% 46% at 86% 16%, rgba(200,168,106,0.10) 0%, transparent 64%);
   }
+  /* Grain + vignette replace the diagonal stripe overlay, which read as a
+     dated motif. The noise alpha is knocked down inside the SVG itself
+     (feFuncA slope 0.09) — painted at full strength it lifts the black to
+     grey and looks like TV static. Kept off ::before so the drift animation
+     never scales the grain. */
   .hero-band::after{
-    content:"";position:absolute;inset:0;z-index:0;opacity:.32;
-    background:repeating-linear-gradient(
-      100deg,
-      transparent 0 74px,
-      rgba(242,237,226,0.022) 74px 148px
-    );
+    content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+    background-image:
+      radial-gradient(118% 90% at 46% 44%, transparent 38%, rgba(0,0,0,0.60) 100%),
+      url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27180%27%20height%3D%27180%27%3E%3Cfilter%20id%3D%27n%27%3E%3CfeTurbulence%20type%3D%27fractalNoise%27%20baseFrequency%3D%270.9%27%20numOctaves%3D%273%27%20stitchTiles%3D%27stitch%27%2F%3E%3CfeColorMatrix%20type%3D%27saturate%27%20values%3D%270%27%2F%3E%3CfeComponentTransfer%3E%3CfeFuncA%20type%3D%27linear%27%20slope%3D%270.09%27%2F%3E%3C%2FfeComponentTransfer%3E%3C%2Ffilter%3E%3Crect%20width%3D%27180%27%20height%3D%27180%27%20filter%3D%27url%28%23n%29%27%2F%3E%3C%2Fsvg%3E");
+    background-size:auto, 180px 180px;
   }
+
   .hero{position:relative;z-index:1;max-width:760px}
   .hero-mark{width:88px;height:88px;margin-bottom:26px}
   .hero .eyebrow{margin-bottom:26px}
