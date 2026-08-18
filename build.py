@@ -365,15 +365,82 @@ CSS_LANDING = """
   .amt{font-size:36px;font-weight:800;letter-spacing:-1.5px;margin:10px 0 2px}
   .amt span{font-size:14px;color:var(--muted);font-weight:600;letter-spacing:0}
   .price-card ul{list-style:none;margin-top:18px;flex:1}
-  .price-card li{
-    color:var(--muted);font-size:14px;padding-left:22px;
-    position:relative;margin-bottom:9px;
+
+
+  /* ---------- Pricing: frosted cards over a large ghost word ----------
+     The depth trick from the reference: an oversized word sits behind the row
+     and is blurred *through* the cards by backdrop-filter, so the cards read as
+     real glass rather than flat panels. */
+  .price-stage{position:relative}
+  .price-ghost{
+    position:absolute;left:50%;top:-2px;transform:translateX(-50%);
+    font-size:clamp(90px,15vw,210px);font-weight:800;letter-spacing:-.04em;
+    line-height:.82;color:rgba(242,237,226,.055);
+    white-space:nowrap;pointer-events:none;user-select:none;z-index:0;
   }
-  .price-card li::before{
-    content:"";position:absolute;left:0;top:8px;
-    width:11px;height:6px;border-left:2px solid var(--gold);
-    border-bottom:2px solid var(--gold);transform:rotate(-45deg);
+  .price-grid{position:relative;z-index:1}
+
+  .price-card{
+    display:flex;flex-direction:column;padding:0;overflow:hidden;
+    background:rgba(22,25,22,.55);
+    backdrop-filter:blur(26px) saturate(140%);
+    -webkit-backdrop-filter:blur(26px) saturate(140%);
+    border:1px solid rgba(242,237,226,.09);
   }
+  .price-head{padding:26px 24px 22px;border-bottom:1px solid rgba(242,237,226,.08)}
+  .price-card .tier{
+    font-size:12px;letter-spacing:2.2px;font-weight:800;text-transform:uppercase;
+    color:var(--muted);margin-bottom:10px;
+  }
+  .price-card .amt{font-size:38px;font-weight:800;letter-spacing:-1.6px;color:var(--ink)}
+  .price-card .amt span{font-size:15px;font-weight:600;color:var(--muted);letter-spacing:0}
+
+  .price-feats{list-style:none;margin:0;padding:22px 24px 8px;flex:1}
+  .price-feats li{
+    display:flex;align-items:flex-start;gap:11px;
+    color:var(--muted);font-size:14px;line-height:1.5;margin-bottom:14px;
+  }
+  .tick{
+    flex:none;width:21px;height:21px;border-radius:50%;
+    display:inline-flex;align-items:center;justify-content:center;
+    background:rgba(200,168,106,.14);border:1px solid rgba(200,168,106,.32);
+    color:var(--gold);font-size:11px;font-weight:800;line-height:1;margin-top:1px;
+  }
+
+  .price-cta{
+    margin:8px 24px 24px;padding:13px 18px;border-radius:11px;text-align:center;
+    font-weight:800;font-size:14px;cursor:default;
+    border:1px solid rgba(242,237,226,.14);color:var(--ink);
+    background:rgba(242,237,226,.03);
+    transition:background .3s ease,border-color .3s ease,color .3s ease;
+  }
+  .price-cta.is-primary{background:var(--gold);color:#161206;border-color:transparent}
+  @media (hover:hover){
+    .price-card:hover .price-cta{border-color:rgba(200,168,106,.45);background:rgba(200,168,106,.08)}
+    .price-card:hover .price-cta.is-primary{background:#d4b578;border-color:transparent}
+  }
+
+  .price-card.pop{
+    background:rgba(28,26,20,.62);
+    border-color:rgba(200,168,106,.34);
+  }
+  .price-card.pop .badge{
+    position:absolute;top:14px;right:16px;left:auto;
+  }
+  .price-card.pop .price-head{padding-top:26px}
+
+  /* backdrop-filter is the whole effect; without it the cards would be flat
+     translucent rectangles, so fall back to an opaque panel instead. */
+  @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+    .price-card{background:#141714}
+    .price-card.pop{background:#1a1813}
+    .price-ghost{color:rgba(242,237,226,.03)}
+  }
+
+  @media (max-width:900px){
+    .price-ghost{font-size:clamp(70px,20vw,130px);top:-6px}
+  }
+
   .price-note{color:var(--muted);font-size:13px;text-align:center;margin-top:26px}
 
   /* ---------- download ---------- */

@@ -330,15 +330,82 @@
   .amt{font-size:36px;font-weight:800;letter-spacing:-1.5px;margin:10px 0 2px}
   .amt span{font-size:14px;color:var(--muted);font-weight:600;letter-spacing:0}
   .price-card ul{list-style:none;margin-top:18px;flex:1}
-  .price-card li{
-    color:var(--muted);font-size:14px;padding-left:22px;
-    position:relative;margin-bottom:9px;
+
+
+  /* ---------- Pricing: frosted cards over a large ghost word ----------
+     The depth trick from the reference: an oversized word sits behind the row
+     and is blurred *through* the cards by backdrop-filter, so the cards read as
+     real glass rather than flat panels. */
+  .price-stage{position:relative}
+  .price-ghost{
+    position:absolute;left:50%;top:-2px;transform:translateX(-50%);
+    font-size:clamp(90px,15vw,210px);font-weight:800;letter-spacing:-.04em;
+    line-height:.82;color:rgba(242,237,226,.055);
+    white-space:nowrap;pointer-events:none;user-select:none;z-index:0;
   }
-  .price-card li::before{
-    content:"";position:absolute;left:0;top:8px;
-    width:11px;height:6px;border-left:2px solid var(--gold);
-    border-bottom:2px solid var(--gold);transform:rotate(-45deg);
+  .price-grid{position:relative;z-index:1}
+
+  .price-card{
+    display:flex;flex-direction:column;padding:0;overflow:hidden;
+    background:rgba(22,25,22,.55);
+    backdrop-filter:blur(26px) saturate(140%);
+    -webkit-backdrop-filter:blur(26px) saturate(140%);
+    border:1px solid rgba(242,237,226,.09);
   }
+  .price-head{padding:26px 24px 22px;border-bottom:1px solid rgba(242,237,226,.08)}
+  .price-card .tier{
+    font-size:12px;letter-spacing:2.2px;font-weight:800;text-transform:uppercase;
+    color:var(--muted);margin-bottom:10px;
+  }
+  .price-card .amt{font-size:38px;font-weight:800;letter-spacing:-1.6px;color:var(--ink)}
+  .price-card .amt span{font-size:15px;font-weight:600;color:var(--muted);letter-spacing:0}
+
+  .price-feats{list-style:none;margin:0;padding:22px 24px 8px;flex:1}
+  .price-feats li{
+    display:flex;align-items:flex-start;gap:11px;
+    color:var(--muted);font-size:14px;line-height:1.5;margin-bottom:14px;
+  }
+  .tick{
+    flex:none;width:21px;height:21px;border-radius:50%;
+    display:inline-flex;align-items:center;justify-content:center;
+    background:rgba(200,168,106,.14);border:1px solid rgba(200,168,106,.32);
+    color:var(--gold);font-size:11px;font-weight:800;line-height:1;margin-top:1px;
+  }
+
+  .price-cta{
+    margin:8px 24px 24px;padding:13px 18px;border-radius:11px;text-align:center;
+    font-weight:800;font-size:14px;cursor:default;
+    border:1px solid rgba(242,237,226,.14);color:var(--ink);
+    background:rgba(242,237,226,.03);
+    transition:background .3s ease,border-color .3s ease,color .3s ease;
+  }
+  .price-cta.is-primary{background:var(--gold);color:#161206;border-color:transparent}
+  @media (hover:hover){
+    .price-card:hover .price-cta{border-color:rgba(200,168,106,.45);background:rgba(200,168,106,.08)}
+    .price-card:hover .price-cta.is-primary{background:#d4b578;border-color:transparent}
+  }
+
+  .price-card.pop{
+    background:rgba(28,26,20,.62);
+    border-color:rgba(200,168,106,.34);
+  }
+  .price-card.pop .badge{
+    position:absolute;top:14px;right:16px;left:auto;
+  }
+  .price-card.pop .price-head{padding-top:26px}
+
+  /* backdrop-filter is the whole effect; without it the cards would be flat
+     translucent rectangles, so fall back to an opaque panel instead. */
+  @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+    .price-card{background:#141714}
+    .price-card.pop{background:#1a1813}
+    .price-ghost{color:rgba(242,237,226,.03)}
+  }
+
+  @media (max-width:900px){
+    .price-ghost{font-size:clamp(70px,20vw,130px);top:-6px}
+  }
+
   .price-note{color:var(--muted);font-size:13px;text-align:center;margin-top:26px}
 
   /* ---------- download ---------- */
@@ -996,48 +1063,443 @@
       <h2>Start free. Upgrade when it earns you a trial.</h2>
       <p>All prices in AUD. Cancel any time from your Apple ID settings.</p>
     </div>
-    <div class="grid g4">
-      <div class="card price-card">
-        <div class="tier">Free</div>
-        <div class="amt">$0</div>
-        <ul>
-          <li>3 highlight reels</li>
-          <li>AI possession tracking</li>
-          <li>Share and download</li>
-        </ul>
-      </div>
-      <div class="card price-card">
-        <div class="tier">Unlimited</div>
-        <div class="amt">$7.99<span> /mo</span></div>
-        <ul>
-          <li>Unlimited reels</li>
-          <li>Everything in Free</li>
-          <li>Priority processing</li>
-        </ul>
-      </div>
-      <div class="card price-card pop">
-        <div class="badge">POPULAR</div>
-        <div class="tier">Pro</div>
-        <div class="amt">$12.99<span> /mo</span></div>
-        <ul>
-          <li>Everything in Unlimited</li>
-          <li>Weekly training sessions</li>
-          <li>Position-specific drills</li>
-        </ul>
-      </div>
-      <div class="card price-card">
-        <div class="tier">Elite</div>
-        <div class="amt">$21.99<span> /mo</span></div>
-        <ul>
-          <li>Everything in Pro</li>
-          <li>Nutrition plan &amp; grocery list</li>
-          <li>Gym &amp; conditioning program</li>
-        </ul>
+
+    <div class="price-stage">
+      <div class="price-ghost" aria-hidden="true">PLANS</div>
+      <div class="grid g4 price-grid">
+        <div class="card price-card ">
+          <div class="price-head">
+            <div class="tier">Free</div>
+            <div class="amt">$0<span></span></div>
+          </div>
+          <ul class="price-feats">
+            <li><span class="tick" aria-hidden="true">✓</span>3 highlight reels</li>
+            <li><span class="tick" aria-hidden="true">✓</span>AI possession tracking</li>
+            <li><span class="tick" aria-hidden="true">✓</span>Share and download</li>
+          </ul>
+          <div class="price-cta ">Start free</div>
+        </div>
+        <div class="card price-card ">
+          <div class="price-head">
+            <div class="tier">Unlimited</div>
+            <div class="amt">$7.99<span> /mo</span></div>
+          </div>
+          <ul class="price-feats">
+            <li><span class="tick" aria-hidden="true">✓</span>Unlimited reels</li>
+            <li><span class="tick" aria-hidden="true">✓</span>Everything in Free</li>
+            <li><span class="tick" aria-hidden="true">✓</span>Priority processing</li>
+          </ul>
+          <div class="price-cta ">Choose Unlimited</div>
+        </div>
+        <div class="card price-card pop">
+          <div class="badge">MOST POPULAR</div>
+          <div class="price-head">
+            <div class="tier">Pro</div>
+            <div class="amt">$12.99<span> /mo</span></div>
+          </div>
+          <ul class="price-feats">
+            <li><span class="tick" aria-hidden="true">✓</span>Everything in Unlimited</li>
+            <li><span class="tick" aria-hidden="true">✓</span>Weekly training sessions</li>
+            <li><span class="tick" aria-hidden="true">✓</span>Position-specific drills</li>
+          </ul>
+          <div class="price-cta is-primary">Choose Pro</div>
+        </div>
+        <div class="card price-card ">
+          <div class="price-head">
+            <div class="tier">Elite</div>
+            <div class="amt">$21.99<span> /mo</span></div>
+          </div>
+          <ul class="price-feats">
+            <li><span class="tick" aria-hidden="true">✓</span>Everything in Pro</li>
+            <li><span class="tick" aria-hidden="true">✓</span>Nutrition plan & grocery list</li>
+            <li><span class="tick" aria-hidden="true">✓</span>Gym & conditioning program</li>
+          </ul>
+          <div class="price-cta ">Choose Elite</div>
+        </div>
       </div>
     </div>
+
     <p class="price-note">Billed via the App Store. Subscriptions renew automatically unless cancelled at least 24 hours before the period ends.</p>
   </div>
 </section>
+
+<!-- ============================================================
+     App screenshot carousel.
+     site/build.py copies the whole run of body markup from the proof bar down
+     to the footer element into site/index.html verbatim, so this markup and
+     the script below survive a rebuild as-is. The styling lives in the
+     shots:start / shots:end block in the head stylesheet above, which build.py
+     lifts separately.
+
+     NB: do not write the literal footer or proof-bar start tags anywhere in
+     this region - build.py locates those boundaries by plain string search,
+     and an earlier match here silently truncates the built page.
+
+     Screens are real captures from appstore/raw/, resized to 560px wide;
+     the captions are HTML rather than burnt into the images.
+     ============================================================ -->
+<section id="screens" class="shots">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker">Inside the app</div>
+      <h2>See it before it lands</h2>
+      <p>Six screens, from the match link you paste to the reel a scout opens.</p>
+    </div>
+
+    <div class="shots-carousel" data-shots role="group"
+         aria-roledescription="carousel" aria-label="CAPPED app screenshots">
+
+      <div class="shots-viewport" data-shots-viewport>
+        <div class="shots-track" id="shots-track" data-shots-track>
+
+          <div class="shot" data-shot data-shot-title="Earn your cap. Get noticed."
+               role="group" aria-roledescription="slide" aria-label="Screen 1 of 6">
+            <div class="phone">
+              <div class="phone-screen">
+                <img src="assets/shots/01-home.jpg" width="560" height="1212"
+                     loading="lazy" decoding="async"
+                     alt="The CAPPED home screen: a Turn a match into a reel card with a New reel button, shortcuts to training sessions, gym and nutrition plans, and the player's own list of reels below.">
+              </div>
+            </div>
+            <div class="shot-cap">
+              <span class="shot-n" aria-hidden="true">01 / 06</span>
+              <h3>Earn your cap. Get noticed.</h3>
+              <p>Your reels, your drills and your next session, all on one screen.</p>
+            </div>
+          </div>
+
+          <div class="shot" data-shot data-shot-title="Drop your Veo or Hudl match link"
+               role="group" aria-roledescription="slide" aria-label="Screen 2 of 6">
+            <div class="phone">
+              <div class="phone-screen">
+                <img src="assets/shots/02-upload-footage.jpg" width="560" height="1212"
+                     loading="lazy" decoding="async"
+                     alt="The New reel form, with fields for the reel title, a Veo or Hudl footage link, the player to feature, shirt number and position, above a Submit reel button.">
+              </div>
+            </div>
+            <div class="shot-cap">
+              <span class="shot-n" aria-hidden="true">02 / 06</span>
+              <h3>Drop your Veo or Hudl match link</h3>
+              <p>Paste the URL, name the player, pick a number. That is the whole setup.</p>
+            </div>
+          </div>
+
+          <div class="shot" data-shot data-shot-title="AI finds your best on-ball moments"
+               role="group" aria-roledescription="slide" aria-label="Screen 3 of 6">
+            <div class="phone">
+              <div class="phone-screen">
+                <img src="assets/shots/03-ai-highlights.jpg" width="560" height="1212"
+                     loading="lazy" decoding="async"
+                     alt="The Find the moments screen, offering a choice between tracking one player through the match or jumping to the loudest passages, with jersey colour, shirt number and scan length fields.">
+              </div>
+            </div>
+            <div class="shot-cap">
+              <span class="shot-n" aria-hidden="true">03 / 06</span>
+              <h3>AI finds your best on-ball moments</h3>
+              <p>Track one player through the match, or jump straight to the loud passages.</p>
+            </div>
+          </div>
+
+          <div class="shot" data-shot data-shot-title="A scout-ready reel in minutes"
+               role="group" aria-roledescription="slide" aria-label="Screen 4 of 6">
+            <div class="phone">
+              <div class="phone-screen">
+                <img src="assets/shots/04-reel-ready.jpg" width="560" height="1212"
+                     loading="lazy" decoding="async"
+                     alt="A finished reel called Season highlights 2026, showing a landscape cut for the club email with Send to a scout and Save to Photos buttons, and a portrait cut for Instagram and TikTok below it.">
+              </div>
+            </div>
+            <div class="shot-cap">
+              <span class="shot-n" aria-hidden="true">04 / 06</span>
+              <h3>A scout-ready reel in minutes</h3>
+              <p>Landscape for the club email, portrait for Instagram and TikTok.</p>
+            </div>
+          </div>
+
+          <div class="shot" data-shot data-shot-title="Coaches browse you and message you"
+               role="group" aria-roledescription="slide" aria-label="Screen 5 of 6">
+            <div class="phone">
+              <div class="phone-screen">
+                <img src="assets/shots/05-coaches.jpg" width="560" height="1212"
+                     loading="lazy" decoding="async"
+                     alt="The Discover feed listing reels from players nearby, each card showing the player's name, position, age group and city above a playable highlight video.">
+              </div>
+            </div>
+            <div class="shot-cap">
+              <span class="shot-n" aria-hidden="true">05 / 06</span>
+              <h3>Coaches browse you and message you</h3>
+              <p>Your reel lands in Discover, filtered by position, age group and area.</p>
+            </div>
+          </div>
+
+          <div class="shot" data-shot data-shot-title="Pro drills, Elite nutrition and gym"
+               role="group" aria-roledescription="slide" aria-label="Screen 6 of 6">
+            <div class="phone">
+              <div class="phone-screen">
+                <img src="assets/shots/06-training-plans.jpg" width="560" height="1212"
+                     loading="lazy" decoding="async"
+                     alt="The Drills tab, with position and level selectors above this week's plan, showing Monday's technical session broken into timed warm-up and main-session drills.">
+              </div>
+            </div>
+            <div class="shot-cap">
+              <span class="shot-n" aria-hidden="true">06 / 06</span>
+              <h3>Pro drills, Elite nutrition and gym</h3>
+              <p>A full session for every day, built for your position and your level.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="shots-ui" data-shots-ui>
+        <div class="shots-row">
+          <button class="shots-arrow" type="button" data-shots-prev
+                  aria-controls="shots-track" aria-label="Previous screen">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+
+          <div class="shots-dots" data-shots-dots>
+            <button class="shots-dot" type="button" data-shots-dot aria-controls="shots-track"
+                    aria-current="true" aria-label="Show screen 1: Earn your cap. Get noticed."><i aria-hidden="true"></i></button>
+            <button class="shots-dot" type="button" data-shots-dot aria-controls="shots-track"
+                    aria-label="Show screen 2: Drop your Veo or Hudl match link"><i aria-hidden="true"></i></button>
+            <button class="shots-dot" type="button" data-shots-dot aria-controls="shots-track"
+                    aria-label="Show screen 3: AI finds your best on-ball moments"><i aria-hidden="true"></i></button>
+            <button class="shots-dot" type="button" data-shots-dot aria-controls="shots-track"
+                    aria-label="Show screen 4: A scout-ready reel in minutes"><i aria-hidden="true"></i></button>
+            <button class="shots-dot" type="button" data-shots-dot aria-controls="shots-track"
+                    aria-label="Show screen 5: Coaches browse you and message you"><i aria-hidden="true"></i></button>
+            <button class="shots-dot" type="button" data-shots-dot aria-controls="shots-track"
+                    aria-label="Show screen 6: Pro drills, Elite nutrition and gym"><i aria-hidden="true"></i></button>
+          </div>
+
+          <button class="shots-arrow" type="button" data-shots-next
+                  aria-controls="shots-track" aria-label="Next screen">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- WCAG 2.2.2 Pause, Stop, Hide - hover/focus pausing alone is not a
+             mechanism a keyboard or screen reader user can rely on. -->
+        <div class="shots-toggle-row">
+          <button class="shots-toggle" type="button" data-shots-toggle aria-controls="shots-track">
+            <svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+              <path d="M6 4h4v16H6zM14 4h4v16h-4z"/>
+            </svg>
+            <svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+              <path d="M7 4l13 8-13 8z"/>
+            </svg>
+            <span data-shots-toggle-text>Pause slideshow</span>
+          </button>
+        </div>
+      </div>
+
+      <p class="shots-live" data-shots-live aria-live="off" aria-atomic="true"></p>
+    </div>
+  </div>
+</section>
+
+<script>
+/* App screenshot carousel — vanilla, no dependencies.
+   Auto-advances every 5s and pauses on hover, on focus, when the tab is hidden,
+   when the visitor presses Pause, and whenever prefers-reduced-motion is set. */
+(function () {
+  "use strict";
+
+  var root = document.querySelector("[data-shots]");
+  if (!root) return;
+
+  var viewport = root.querySelector("[data-shots-viewport]");
+  var track    = root.querySelector("[data-shots-track]");
+  var slides   = [].slice.call(root.querySelectorAll("[data-shot]"));
+  var dots     = [].slice.call(root.querySelectorAll("[data-shots-dot]"));
+  var live     = root.querySelector("[data-shots-live]");
+  var toggle   = root.querySelector("[data-shots-toggle]");
+  var toggleTx = root.querySelector("[data-shots-toggle-text]");
+  var prev     = root.querySelector("[data-shots-prev]");
+  var next     = root.querySelector("[data-shots-next]");
+
+  if (!viewport || !track || slides.length < 2) return;
+
+  var DELAY = 5000;
+  var index = 0;
+  var timer = null;
+  var wantsPlay = true;   // the visitor's own intent, via the Pause button
+  var hovering  = false;
+  var focused   = false;
+
+  var mq = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
+  function reduced() { return !!(mq && mq.matches); }
+
+  // Hands the viewport over from "plain scroller" to the transform-driven track.
+  root.classList.add("is-ready");
+
+  function place(animate) {
+    var slide = slides[index];
+    var offset = Math.round((viewport.clientWidth - slide.offsetWidth) / 2 - slide.offsetLeft);
+    var instant = !animate || reduced();
+    if (instant) track.style.transition = "none";
+    track.style.transform = "translate3d(" + offset + "px,0,0)";
+    if (instant) {
+      void track.offsetHeight;          // flush, so the next move still animates
+      track.style.transition = "";
+    }
+  }
+
+  function render(animate, announce) {
+    for (var i = 0; i < slides.length; i++) {
+      slides[i].classList.toggle("is-active", i === index);
+    }
+    for (var j = 0; j < dots.length; j++) {
+      if (j === index) dots[j].setAttribute("aria-current", "true");
+      else dots[j].removeAttribute("aria-current");
+    }
+    place(animate);
+    if (announce && live) {
+      live.textContent = "Screen " + (index + 1) + " of " + slides.length + ": " +
+                         (slides[index].getAttribute("data-shot-title") || "");
+    }
+  }
+
+  function go(to, announce) {
+    var n = slides.length;
+    index = ((to % n) + n) % n;
+    render(true, announce);
+  }
+
+  function rotating() {
+    return wantsPlay && !hovering && !focused && !document.hidden && !reduced();
+  }
+
+  // Single place that starts/stops the timer. Called after anything that could
+  // change the answer, so a resumed slideshow always gets a fresh full interval.
+  function sync() {
+    if (timer) { clearInterval(timer); timer = null; }
+    var on = rotating();
+    if (on) timer = setInterval(function () { go(index + 1, false); }, DELAY);
+    // Announcing every automatic advance would be noise; only announce while
+    // the slideshow is stopped, i.e. for visitor-driven changes. (APG.)
+    if (live) live.setAttribute("aria-live", on ? "off" : "polite");
+  }
+
+  function paint() {
+    if (!toggle) return;
+    toggle.classList.toggle("is-paused", !wantsPlay);
+    if (toggleTx) toggleTx.textContent = wantsPlay ? "Pause slideshow" : "Play slideshow";
+  }
+
+  // ---- controls ----
+  if (prev) prev.addEventListener("click", function () { go(index - 1, true); sync(); });
+  if (next) next.addEventListener("click", function () { go(index + 1, true); sync(); });
+
+  dots.forEach(function (dot, i) {
+    dot.addEventListener("click", function () { go(i, true); sync(); });
+  });
+
+  if (toggle) toggle.addEventListener("click", function () {
+    wantsPlay = !wantsPlay;
+    paint();
+    sync();
+    if (live && !wantsPlay) live.textContent = "Slideshow paused.";
+  });
+
+  // ---- keyboard: arrows move between slides while focus is in the carousel ----
+  root.addEventListener("keydown", function (e) {
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    var k = e.key;
+    if (k === "ArrowLeft")       go(index - 1, true);
+    else if (k === "ArrowRight") go(index + 1, true);
+    else if (k === "Home")       go(0, true);
+    else if (k === "End")        go(slides.length - 1, true);
+    else return;
+    e.preventDefault();
+    sync();
+  });
+
+  // ---- pause on hover (pointer devices only, so a tap cannot wedge it) ----
+  if (!window.matchMedia || window.matchMedia("(hover: hover)").matches) {
+    root.addEventListener("mouseenter", function () { hovering = true;  sync(); });
+    root.addEventListener("mouseleave", function () { hovering = false; sync(); });
+  }
+
+  // ---- pause on focus ----
+  root.addEventListener("focusin", function () { focused = true; sync(); });
+  root.addEventListener("focusout", function (e) {
+    if (!root.contains(e.relatedTarget)) { focused = false; sync(); }
+  });
+
+  // ---- pause when the tab is hidden ----
+  document.addEventListener("visibilitychange", sync);
+
+  // ---- touch swipe: passive listeners only, so vertical scrolling is never blocked ----
+  var x0 = null, y0 = null, axis = null;
+  viewport.addEventListener("touchstart", function (e) {
+    var t = e.changedTouches[0];
+    x0 = t.clientX; y0 = t.clientY; axis = null;
+  }, { passive: true });
+
+  viewport.addEventListener("touchmove", function (e) {
+    if (x0 === null || axis) return;
+    var t = e.changedTouches[0];
+    var dx = Math.abs(t.clientX - x0), dy = Math.abs(t.clientY - y0);
+    if (dx > 8 || dy > 8) axis = dx > dy ? "x" : "y";
+  }, { passive: true });
+
+  viewport.addEventListener("touchend", function (e) {
+    if (x0 === null) return;
+    var dx = e.changedTouches[0].clientX - x0;
+    x0 = null;
+    if (axis === "x" && Math.abs(dx) > 40) { go(index + (dx < 0 ? 1 : -1), true); sync(); }
+  }, { passive: true });
+
+  // ---- keep the active slide centred through resizes and font swaps ----
+  var frame = 0;
+  function remeasure() {
+    if (frame) cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(function () { frame = 0; render(false, false); });
+  }
+  window.addEventListener("resize", remeasure);
+  window.addEventListener("load", remeasure);
+  if (window.ResizeObserver) new ResizeObserver(remeasure).observe(viewport);
+
+  // ---- react to the motion preference changing mid-session ----
+  if (mq) {
+    var onMotion = function () { render(false, false); sync(); };
+    if (mq.addEventListener) mq.addEventListener("change", onMotion);
+    else if (mq.addListener) mq.addListener(onMotion);
+  }
+
+  paint();
+  render(false, false);
+  sync();
+})();
+</script>
+
+<section class="band">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker">Everything included</div>
+      <h2>More than a video editor</h2>
+      <p>CAPPED backs your football on and off the pitch.</p>
+    </div>
+    <div class="grid g3">
+      <div class="card feat"><span class="ic">🎬</span><h3>Highlight reels</h3><p>AI-detected moments, branded output, ready to share anywhere.</p></div>
+      <div class="card feat"><span class="ic">⚽</span><h3>Training sessions</h3><p>Weekly drill plans built around your position and level.</p></div>
+      <div class="card feat"><span class="ic">🥗</span><h3>Nutrition plan</h3><p>Morning to dinner, snacks included, with a grocery list and water tracker.</p></div>
+      <div class="card feat"><span class="ic">🏋️</span><h3>Gym plan</h3><p>Footballer-specific strength and conditioning, tilted to your position.</p></div>
+      <div class="card feat"><span class="ic">🔍</span><h3>Coach discovery</h3><p>Coaches browse by position, age group and area — free, always.</p></div>
+      <div class="card feat"><span class="ic">💬</span><h3>Direct messaging</h3><p>Coaches reach out in-app. No DMs lost in a club inbox.</p></div>
+    </div>
+  </div>
+</section>
+
+
 
 <section id="download" class="dl">
   <div class="wrap">
