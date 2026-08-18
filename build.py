@@ -203,10 +203,15 @@ CSS_LANDING = """
      Scroll drives --p from 0 to 1: the band opens vertically, the lines part
      and fade, and the page beneath is revealed. Sticky header + a runway spacer
      supply the scroll distance, so nothing hijacks the user's scrolling. */
+  /* The stage bounds how long the header stays stuck: it releases once the
+     stage scrolls past, instead of sitting over the rest of the document. */
+  .hero-stage{position:relative}
   .hero-band{
     position:sticky;top:0;height:100svh;min-height:560px;
     display:flex;align-items:center;justify-content:center;
     padding:0;overflow:hidden;z-index:1;
+    /* nothing in the hero is interactive, so it must never take a click */
+    pointer-events:none;
   }
   .split{--p:0;position:relative;width:100%;text-align:center}
   .split-type{
@@ -935,15 +940,21 @@ def build_index(src_path, out_path, css, favicon):
 
 {nav("index.html")}
 
-<header class="hero-band">
-  <div class="split">
-    <div class="split-type split-top"><span>Get seen.</span></div>
-    <span class="split-mark brand-mark" aria-hidden="true"></span>
-    <div class="split-type split-bot"><span>Get signed.</span></div>
-  </div>
-  <div class="split-cue" aria-hidden="true">Scroll</div>
-</header>
-<div class="split-runway" aria-hidden="true"></div>
+<!-- The stage scopes the sticky header. Without it the header's containing
+     block is <body>, so it stays stuck at top:0 for the WHOLE document and
+     — invisible at opacity 0 but still hit-testable — swallows every click
+     on the page beneath it. -->
+<div class="hero-stage">
+  <header class="hero-band">
+    <div class="split">
+      <div class="split-type split-top"><span>Get seen.</span></div>
+      <span class="split-mark brand-mark" aria-hidden="true"></span>
+      <div class="split-type split-bot"><span>Get signed.</span></div>
+    </div>
+    <div class="split-cue" aria-hidden="true">Scroll</div>
+  </header>
+  <div class="split-runway" aria-hidden="true"></div>
+</div>
 
 <main id="main">
 
