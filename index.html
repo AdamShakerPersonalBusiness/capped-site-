@@ -232,6 +232,31 @@
   }
   .split-runway{height:64svh;pointer-events:none}
 
+  /* ---------- the match clock ---------- */
+  .clock{
+    position:fixed;left:26px;bottom:26px;z-index:40;
+    display:flex;flex-direction:column;gap:3px;
+    pointer-events:none;
+    opacity:0;transform:translateY(6px);
+    transition:opacity .5s ease,transform .5s ease;
+  }
+  .clock.is-on{opacity:1;transform:none}
+  .clock-label{
+    font-size:9.5px;letter-spacing:2.2px;text-transform:uppercase;
+    font-weight:700;color:var(--muted);
+  }
+  .clock-time{
+    font-variant-numeric:tabular-nums;
+    font-size:15px;font-weight:700;letter-spacing:.5px;color:var(--gold);
+  }
+  @media (max-width:720px){
+    .clock{left:18px;bottom:18px}
+    .clock-time{font-size:13px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .clock{display:none}
+  }
+
 
   /* No motion: a composed static hero, no sticky and no runway to scroll past. */
   @media (prefers-reduced-motion:reduce){
@@ -704,6 +729,15 @@
     <div class="split-cue" aria-hidden="true">Scroll</div>
   </header>
   <div class="split-runway" aria-hidden="true"></div>
+</div>
+
+<!-- The page's one gimmick, and it earns its place: it performs the product.
+     90 minutes of match compresses to a 90-second reel as you scroll, so the
+     claim is demonstrated before it is read. aria-hidden because it is a
+     decorative restatement of copy that already exists in the page. -->
+<div class="clock" id="clock" aria-hidden="true">
+  <span class="clock-label" id="clock-label">Full match</span>
+  <span class="clock-time" id="clock-time">90:00</span>
 </div>
 
 <main id="main">
@@ -1328,6 +1362,50 @@
     window.addEventListener('scroll', onSplitScroll, { passive: true });
     window.addEventListener('resize', onSplitScroll, { passive: true });
     apply();
+  }
+
+  /* ---- match clock: 90 minutes of footage compressing to a 90-second reel.
+       Reads scrollY only and writes two text nodes, batched into a frame, so it
+       costs the same as the split-hero driver already running alongside it. */
+  var clock = document.getElementById('clock');
+  if (clock) {
+    var cTime = document.getElementById('clock-time');
+    var cLabel = document.getElementById('clock-label');
+    var START = 90 * 60;   // 90:00, a full match
+    var END = 90;          // 0:90 — the reel that comes out the other side
+    var cRaf = 0;
+
+    var fmt = function (secs) {
+      var m = Math.floor(secs / 60), s = Math.round(secs % 60);
+      if (s === 60) { m += 1; s = 0; }
+      return m + ':' + (s < 10 ? '0' + s : s);
+    };
+
+    var applyClock = function () {
+      cRaf = 0;
+      // The count finishes on the signup, not the footer — the payoff should
+      // land with the ask, and measuring to the document end put "your reel"
+      // beside the copyright line instead.
+      var dl = document.getElementById('download');
+      var foot = document.querySelector('.site-foot');
+      var end = dl
+        ? dl.getBoundingClientRect().top + window.scrollY - window.innerHeight * 0.45
+        : document.documentElement.scrollHeight - window.innerHeight;
+      var p = end > 0 ? Math.min(1, Math.max(0, window.scrollY / end)) : 0;
+      // ease out, so the big minutes fall away early and the last seconds linger
+      var eased = 1 - Math.pow(1 - p, 2.2);
+      var secs = START + (END - START) * eased;
+      cTime.textContent = fmt(secs);
+      cLabel.textContent = secs <= END + 2 ? 'Your reel' : 'Full match';
+      // in once the hero is behind you, out once the footer arrives
+      var footIn = foot && foot.getBoundingClientRect().top < window.innerHeight - 40;
+      clock.classList.toggle('is-on', window.scrollY > window.innerHeight * 0.6 && !footIn);
+    };
+
+    var onClock = function () { if (!cRaf) cRaf = requestAnimationFrame(applyClock); };
+    window.addEventListener('scroll', onClock, { passive: true });
+    window.addEventListener('resize', onClock, { passive: true });
+    applyClock();
   }
 
   /* ---- 3. nav condenses once you leave the hero */

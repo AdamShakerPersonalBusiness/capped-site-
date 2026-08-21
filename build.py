@@ -264,6 +264,31 @@ CSS_LANDING = """
   }
   .split-runway{height:64svh;pointer-events:none}
 
+  /* ---------- the match clock ---------- */
+  .clock{
+    position:fixed;left:26px;bottom:26px;z-index:40;
+    display:flex;flex-direction:column;gap:3px;
+    pointer-events:none;
+    opacity:0;transform:translateY(6px);
+    transition:opacity .5s ease,transform .5s ease;
+  }
+  .clock.is-on{opacity:1;transform:none}
+  .clock-label{
+    font-size:9.5px;letter-spacing:2.2px;text-transform:uppercase;
+    font-weight:700;color:var(--muted);
+  }
+  .clock-time{
+    font-variant-numeric:tabular-nums;
+    font-size:15px;font-weight:700;letter-spacing:.5px;color:var(--gold);
+  }
+  @media (max-width:720px){
+    .clock{left:18px;bottom:18px}
+    .clock-time{font-size:13px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .clock{display:none}
+  }
+
 
   /* No motion: a composed static hero, no sticky and no runway to scroll past. */
   @media (prefers-reduced-motion:reduce){
@@ -975,6 +1000,15 @@ def build_index(src_path, out_path, css, favicon):
     <div class="split-cue" aria-hidden="true">Scroll</div>
   </header>
   <div class="split-runway" aria-hidden="true"></div>
+</div>
+
+<!-- The page's one gimmick, and it earns its place: it performs the product.
+     90 minutes of match compresses to a 90-second reel as you scroll, so the
+     claim is demonstrated before it is read. aria-hidden because it is a
+     decorative restatement of copy that already exists in the page. -->
+<div class="clock" id="clock" aria-hidden="true">
+  <span class="clock-label" id="clock-label">Full match</span>
+  <span class="clock-time" id="clock-time">90:00</span>
 </div>
 
 <main id="main">
