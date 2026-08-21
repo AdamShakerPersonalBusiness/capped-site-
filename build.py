@@ -415,7 +415,11 @@ CSS_LANDING = """
   .card p{color:var(--muted);margin-top:8px;font-size:15px}
 
   .feat{padding:24px}
-  .feat .ic{font-size:24px;margin-bottom:12px;display:block}
+  .feat .ic{
+    display:block;width:26px;height:26px;margin-bottom:14px;
+    fill:none;stroke:var(--gold);stroke-width:1.6;
+    stroke-linecap:round;stroke-linejoin:round;
+  }
   .feat h3{font-size:16px}
   .feat p{font-size:14px;margin-top:6px}
 
