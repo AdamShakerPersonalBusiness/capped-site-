@@ -290,7 +290,7 @@ CSS_LANDING = """
   .fine{color:var(--muted);font-size:13px;margin-top:20px}
 
   /* ---------- proof bar ---------- */
-  .proof{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bg2)}
+  .proof{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bg)}
   .proof-in{padding-top:26px;padding-bottom:26px;text-align:center}
   .proof-label{color:var(--muted);font-size:12px;letter-spacing:2.5px;font-weight:700;text-transform:uppercase}
   .chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:16px}
@@ -303,7 +303,7 @@ CSS_LANDING = """
 
   /* ---------- sections ---------- */
   section{padding:88px 0}
-  .band{background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .band{background:var(--bg);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
   .sec-head{max-width:620px;margin-bottom:48px}
   .kicker{color:var(--gold);font-size:12px;letter-spacing:3px;font-weight:800;text-transform:uppercase}
   h2{font-size:clamp(30px,4.8vw,46px);line-height:1.02;letter-spacing:-0.035em;margin-top:14px}
@@ -507,7 +507,7 @@ CSS_LANDING = """
   .price-note{color:var(--muted);font-size:13px;text-align:center;margin-top:26px}
 
   /* ---------- download ---------- */
-  .dl{background:var(--bg2);border-top:1px solid var(--line);text-align:center}
+  .dl{background:var(--bg);border-top:1px solid var(--line);text-align:center}
   .dl h2{margin:0 auto}
   .dl p{color:var(--muted);margin:16px auto 32px;max-width:460px;font-size:17px}
   .store{
@@ -537,7 +537,7 @@ CSS_LEGAL = """
   .wrap{max-width:1040px}
 
   /* ---------- page head ---------- */
-  .legal-head{position:relative;overflow:hidden;border-bottom:1px solid var(--line);background:var(--bg2)}
+  .legal-head{position:relative;overflow:hidden;border-bottom:1px solid var(--line);background:var(--bg)}
   .legal-head::before{
     content:"";position:absolute;inset:0;z-index:0;
     background:
@@ -927,10 +927,15 @@ def build_index(src_path, out_path, css, favicon):
         raise SystemExit("landing body does not end on a closing section - the lift was truncated")
 
     # markup fixes only, no copy changes
-    body_mid = body_mid.replace(
-        '<section style="background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">',
-        '<section class="band">',
-    )
+    BAND_SRC = ('<section style="background:var(--bg2);border-top:1px solid var(--line);'
+                'border-bottom:1px solid var(--line)">')
+    if BAND_SRC not in body_mid:
+        raise SystemExit(
+            "the feature-grid section no longer matches BAND_SRC, so it would ship "
+            "with an inline background instead of class=band - update BAND_SRC to "
+            "match marketing/landing-page.html"
+        )
+    body_mid = body_mid.replace(BAND_SRC, '<section class="band">')
     body_mid = body_mid.replace(
         '<a href="#" class="store">',
         '<!-- TODO: swap "#download" for the real App Store listing URL once CAPPED is live -->\n    '
