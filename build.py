@@ -747,8 +747,13 @@ def head(title, description, css, favicon, extra_head=""):
 <meta property="og:site_name" content="CAPPED">
 <meta property="og:title" content="{title}">
 <meta property="og:description" content="{description}">
-<meta property="og:image" content="logo-mark.png">
-<meta name="twitter:card" content="summary">
+<meta property="og:url" content="https://cappedhq.com/">
+<meta property="og:image" content="https://cappedhq.com/share-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="CAPPED — Get seen. Get signed. AI highlight reels for Australian footballers.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://cappedhq.com/share-card.png">
 <link rel="icon" type="image/png" href="{favicon}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
