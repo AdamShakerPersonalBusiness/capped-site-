@@ -156,7 +156,7 @@ CSS_CORE = """
   .dot{width:6px;height:6px;border-radius:50%;background:var(--gold)}
 
   /* ---------- footer ---------- */
-  .site-foot{border-top:1px solid var(--line);padding:44px 0;color:var(--muted);font-size:14px}
+  .site-foot{padding:56px 0 44px;color:var(--muted);font-size:14px}
   .foot-in{display:flex;flex-wrap:wrap;gap:24px;align-items:center;justify-content:space-between}
   .foot-brand{display:flex;align-items:center;gap:12px}
   .foot-brand .brand-mark{width:34px;height:34px}
@@ -290,7 +290,7 @@ CSS_LANDING = """
   .fine{color:var(--muted);font-size:13px;margin-top:20px}
 
   /* ---------- proof bar ---------- */
-  .proof{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bg)}
+  .proof{background:var(--bg)}
   .proof-in{padding-top:26px;padding-bottom:26px;text-align:center}
   .proof-label{color:var(--muted);font-size:12px;letter-spacing:2.5px;font-weight:700;text-transform:uppercase}
   .chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:16px}
@@ -303,7 +303,7 @@ CSS_LANDING = """
 
   /* ---------- sections ---------- */
   section{padding:88px 0}
-  .band{background:var(--bg);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .band{background:var(--bg)}
   .sec-head{max-width:620px;margin-bottom:48px}
   .kicker{color:var(--gold);font-size:12px;letter-spacing:3px;font-weight:800;text-transform:uppercase}
   h2{font-size:clamp(30px,4.8vw,46px);line-height:1.02;letter-spacing:-0.035em;margin-top:14px}
@@ -507,7 +507,7 @@ CSS_LANDING = """
   .price-note{color:var(--muted);font-size:13px;text-align:center;margin-top:26px}
 
   /* ---------- download ---------- */
-  .dl{background:var(--bg);border-top:1px solid var(--line);text-align:center}
+  .dl{background:var(--bg);text-align:center}
   .dl h2{margin:0 auto}
   .dl p{color:var(--muted);margin:16px auto 32px;max-width:460px;font-size:17px}
   .store{
@@ -537,7 +537,7 @@ CSS_LEGAL = """
   .wrap{max-width:1040px}
 
   /* ---------- page head ---------- */
-  .legal-head{position:relative;overflow:hidden;border-bottom:1px solid var(--line);background:var(--bg)}
+  .legal-head{position:relative;overflow:hidden;background:var(--bg)}
   .legal-head::before{
     content:"";position:absolute;inset:0;z-index:0;
     background:
