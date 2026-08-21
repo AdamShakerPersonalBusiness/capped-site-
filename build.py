@@ -58,7 +58,7 @@ CSS_CORE = """
     --gold:#C8A86A;
     --gold-dim:rgba(200,168,106,0.15);
     --line:rgba(242,237,226,0.10);
-    --pitch:rgba(46,92,58,0.28);
+    --lift:rgba(242,237,226,0.045);
     --max:1120px;
     --logo:url("__LOGO__");
   }
@@ -200,10 +200,11 @@ CSS_LANDING = """
   .hero-band::before{
     content:"";position:absolute;inset:0;z-index:0;
     background:
-      /* one warm bloom sitting behind the headline, not in a corner */
-      radial-gradient(74% 60% at 26% 58%, rgba(46,92,58,0.30) 0%, transparent 62%),
-      /* a smaller gold catch opposite, for depth rather than decoration */
-      radial-gradient(54% 46% at 86% 16%, rgba(200,168,106,0.10) 0%, transparent 64%);
+      /* a neutral lift behind the headline — depth without introducing a
+         second colour, which is what made the old green wash read as murk */
+      radial-gradient(76% 62% at 28% 54%, rgba(242,237,226,0.055) 0%, transparent 64%),
+      /* gold is the only hue on the page, and it stays a catch, not a wash */
+      radial-gradient(50% 44% at 84% 14%, rgba(200,168,106,0.09) 0%, transparent 62%);
   }
   /* Grain + vignette replace the diagonal stripe overlay, which read as a
      dated motif. The noise alpha is knocked down inside the SVG itself
@@ -540,7 +541,7 @@ CSS_LEGAL = """
   .legal-head::before{
     content:"";position:absolute;inset:0;z-index:0;
     background:
-      radial-gradient(80% 70% at 12% 0%, var(--pitch) 0%, transparent 60%),
+      radial-gradient(80% 70% at 12% 0%, var(--lift) 0%, transparent 60%),
       radial-gradient(60% 60% at 96% 100%, rgba(200,168,106,0.12) 0%, transparent 62%);
   }
   .legal-head .wrap{position:relative;z-index:1;padding-top:56px;padding-bottom:48px}
@@ -681,7 +682,7 @@ CSS_404 = """
   .nf::before{
     content:"";position:absolute;inset:0;z-index:0;
     background:
-      radial-gradient(70% 60% at 50% 0%, var(--pitch) 0%, transparent 62%),
+      radial-gradient(70% 60% at 50% 0%, var(--lift) 0%, transparent 62%),
       radial-gradient(60% 60% at 50% 100%, rgba(200,168,106,0.12) 0%, transparent 60%);
   }
   .nf-in{position:relative;z-index:1;max-width:600px;margin:0 auto}
